@@ -4,6 +4,74 @@
 		"selected_items":
 		[
 			[
+				"nu",
+				"number_of_tie_matches"
+			],
+			[
+				"mat",
+				"match"
+			],
+			[
+				"print_",
+				"print_matches"
+			],
+			[
+				"team",
+				"team_out"
+			],
+			[
+				"mach",
+				"matches"
+			],
+			[
+				"number",
+				"number_of_teams"
+			],
+			[
+				"print",
+				"print_teams"
+			],
+			[
+				"number_of",
+				"number_of_teams"
+			],
+			[
+				"pr",
+				"print"
+			],
+			[
+				"num",
+				"number_of_ties"
+			],
+			[
+				"numb",
+				"number_of_ties"
+			],
+			[
+				"pri",
+				"printf\tprintf …"
+			],
+			[
+				"numer",
+				"number_of_matches"
+			],
+			[
+				"deci",
+				"decide_action"
+			],
+			[
+				"dec",
+				"decide_action"
+			],
+			[
+				"ar",
+				"argv"
+			],
+			[
+				"macth",
+				"matches"
+			],
+			[
 				"tea",
 				"teams"
 			],
@@ -20,28 +88,12 @@
 				"team_home"
 			],
 			[
-				"team",
-				"team"
-			],
-			[
-				"num",
-				"number_of_teams"
-			],
-			[
 				"tams",
 				"teams"
 			],
 			[
 				"str",
 				"strcmp"
-			],
-			[
-				"number",
-				"number_of_teams"
-			],
-			[
-				"numer",
-				"number_of_lines_in_file"
 			],
 			[
 				"team_out",
@@ -58,10 +110,6 @@
 			[
 				"FIL",
 				"FILE_NAME"
-			],
-			[
-				"mat",
-				"new_match"
 			],
 			[
 				"te",
@@ -106,10 +154,6 @@
 			[
 				"matched",
 				"matched_array_length"
-			],
-			[
-				"mach",
-				"matched"
 			],
 			[
 				"tes",
@@ -236,10 +280,6 @@
 				"warehouse"
 			],
 			[
-				"pr",
-				"printf\tprintf …"
-			],
-			[
 				"pro",
 				"product_code"
 			],
@@ -268,16 +308,8 @@
 				"webpack"
 			],
 			[
-				"print",
-				"printf\tprintf …"
-			],
-			[
 				"gu",
 				"gutil"
-			],
-			[
-				"ar",
-				"article"
 			],
 			[
 				"req",
@@ -482,38 +514,6 @@
 			[
 				"face",
 				"facebook-square"
-			],
-			[
-				"med",
-				"media"
-			],
-			[
-				"color-",
-				"color-gray-light"
-			],
-			[
-				"content-section__tex",
-				"content-section__textbox--right"
-			],
-			[
-				"fadein--",
-				"fadein--left"
-			],
-			[
-				"fade",
-				"fadein--show"
-			],
-			[
-				"fadein",
-				"fadein"
-			],
-			[
-				"element",
-				"elements"
-			],
-			[
-				"fa",
-				"fadeinElements"
 			]
 		]
 	},
@@ -851,6 +851,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"fopen",
+			"d",
+			"print_tie_matches",
+			"void print_tie_matches (match* matches, int number_of_matches) {\n",
+			"print_tie_matches",
+			"case",
+			".total",
+			"goals",
+			"goals.",
+			"wins",
+			"out_wins",
+			"home_wins",
 			"   /* Match ",
 			"team_compare",
 			"ompare (void* a, void* b)",
@@ -966,19 +978,7 @@
 			"node at",
 			"true",
 			"resolve",
-			"compiler",
-			"config",
-			"const",
-			"3.4.4",
-			" var i18next = self.get('i18next');",
-			"var options = _goodiepackAppConfigEnvironment['default'].i18nextOptions || {};",
-			"thick",
-			"node",
-			"gridLabels",
-			"gridLabel",
-			"1.2",
-			"1",
-			"false"
+			"compiler"
 		],
 		"highlight": true,
 		"in_selection": false,

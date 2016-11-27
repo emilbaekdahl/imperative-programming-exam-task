@@ -67,7 +67,6 @@ void    read_matches                          (char* file_name, match* matches);
 void    read_teams                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
 int     number_of_lines_in_file               (char* file_name);
 int     convert_string_to_number              (char* string_with_separator, int string_length);
-void    decide_action                         (int selector);
 match*  tie_matches                           (match* matches, int number_of_matches);
 void    round_with_less_than_10_goals         (match* matches, int number_of_matches, int* round_number, int* total_goals);
 team*   teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
@@ -78,6 +77,8 @@ int     is_match_in_time_frame                (match* match, time* lower, time* 
 void    print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
 int     team_compare                          (const void* a, const void* b);
 void    print_to_stdio                        ();
+void    print_matches                         (match* matches, int number_of_matches);
+void    print_teams                           (team* teams, int number_of_teams);
 
 
 /*
@@ -95,6 +96,8 @@ int main (int argc, char* argv[]) {
   read_matches(file_name, matches);
   read_teams(matches, number_of_matches, teams, number_of_teams);
 
+  print_matches(matches, number_of_matches);
+
   /* Print everything to stdio if argument is passed */
   int i;
   for (i = 0; i < argc; i++) {
@@ -103,43 +106,43 @@ int main (int argc, char* argv[]) {
     }
   }
 
+  /* Dialog */ 
   int selector;
   do {
     printf("You have the following options\n"
-         "\t(1) List tie matches\n"
+         "\t(1) List tie matches with more than 4 goals scored\n"
          "\t(2) List round with less than 10 goals\n"
          "\t(3) List teams winning more matches out than home\n"
          "\t(4) List matches on Sundays between 13:15 and 14:15\n"
-         "\t(5) Displat Superliga 2015-2016 result\n");
+         "\t(5) Displat Superliga 2015-2016 result\n"
+         "Enter 1-5: ");
     scanf(" %d", &selector);
   } while (selector < 1 || selector > 5);
 
-  decide_action(selector);
+
+  if (selector == 1) {
+    match* ties = tie_matches(matches, number_of_matches);
+    print_matches(ties, sizeof(ties));
+  }
+  else if (selector == 2) {
+    int round;
+    int goals;
+    round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
+    printf("Round %d had %d goals\n", round, goals);
+  }
+  else if (selector == 3) {
+    
+  }
+  else if (selector == 4) {
+
+  }
+  else if (selector == 5) {
+
+  }
 
   //print_result(matches, number_of_matches, teams, number_of_teams);
 
   return 0;
-}
-
-/*
- * Perform action based on user input
- */
-void decide_action (int selector) {
-  switch (selector) {
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-    default:
-      break;
-  }
 }
 
 /*
@@ -165,6 +168,45 @@ void read_matches (char* file_name, match* matches) {
     matches[i].audience = convert_string_to_number(temp_audience, sizeof(temp_audience));
   }
   fclose(file_handle);
+}
+
+/*
+ * Helper function for read_matches
+ * Calculate number of lines in file with name file_name
+ */
+int number_of_lines_in_file (char* file_name) {
+  FILE *fp = fopen(file_name, "r");
+
+  int lines = 0;
+  int chr;
+
+  while ((chr = fgetc(fp)) != EOF) {
+    if (chr == '\n') {
+      lines++;
+    }
+  }
+
+  fclose(fp);
+  return lines + 1;
+}
+
+/*
+ * Helper function for read_matches
+ * Converts number in string format with seperators to int
+ */
+int convert_string_to_number (char* string_with_separator, int string_length) {
+  int i;
+  int j = 0;
+  char string_without_separator[string_length];
+
+  for (i = 0; i < string_length; i++) {
+    if (string_with_separator[i] != '.') {
+      string_without_separator[j] = string_with_separator[i];
+      j++;
+    }
+  }
+
+  return atoi(string_without_separator);
 }
 
 /*
@@ -243,44 +285,6 @@ void read_teams (match* matches, int number_of_matches, team* teams, int number_
 }
 
 /*
- * Calculate number of lines in file with name file_name
- */
-int number_of_lines_in_file (char* file_name) {
-  FILE *fp = fopen(file_name, "r");
-
-  int lines = 0;
-  int chr;
-
-  while ((chr = fgetc(fp)) != EOF) {
-    if (chr == '\n') {
-      lines++;
-    }
-  }
-
-  fclose(fp);
-  return lines + 1;
-}
-
-/*
- * Helper function for read_matches
- * Converts number in string format with seperators to int
- */
-int convert_string_to_number (char* string_with_separator, int string_length) {
-  int i;
-  int j = 0;
-  char string_without_separator[string_length];
-
-  for (i = 0; i < string_length; i++) {
-    if (string_with_separator[i] != '.') {
-      string_without_separator[j] = string_with_separator[i];
-      j++;
-    }
-  }
-
-  return atoi(string_without_separator);
-}
-
-/*
  * Returns array of tie matches where the total score is larger than 4
  */
 match* tie_matches (match * matches, int number_of_matches) {
@@ -300,6 +304,22 @@ match* tie_matches (match * matches, int number_of_matches) {
   }
 
   return tie_matches;
+}
+
+void print_tie_matches (match* matches, int number_of_matches) {
+  int i;
+  printf("%d\n", number_of_matches);
+  for (i = 0; i < number_of_matches; i++) {
+    printf("The following matches with more than 4 goals scored ended as a tie\n"
+           "\n"
+           "%-3d %-3s %.2d/%.2d/%d %d.%.2d %-3s - %-3s %d - %d %d",
+           matches[i].round, matches[i].week_day,
+           matches[i].date.day, matches[i].date.month, matches[i].date.year,
+           matches[i].time.hours, matches[i].time.minutes,
+           matches[i].team_home, matches[i].team_out,
+           matches[i].score.home, matches[i].score.out,
+           matches[i].audience);
+  }
 }
 
 /*
@@ -482,6 +502,27 @@ int team_compare (const void* a, const void* b) {
   else {
     return 0;
   }
+}
+
+/*
+ * Helper functiond for printing array of matches
+ */
+void print_matches (match* matches, int number_of_matches) {
+  int i;
+  printf("Round  Day  Date       Time  Home team  Out team  Home goals  Out goals  Audience\n");
+  for (i = 0; i < number_of_matches; i++) {
+    printf("%-6d %-4s %.2d/%.2d/%d %.2d:%.2d %-10s %-9s %-11d %-10d %d\n",
+           matches[i].round,        matches[i].week_day,  matches[i].date.day,
+           matches[i].date.month,   matches[i].date.year, matches[i].time.hours,
+           matches[i].time.minutes, matches[i].team_home, matches[i].team_out,
+           matches[i].score.home,   matches[i].score.out, matches[i].audience);
+  }
+}
+
+/*
+ * Helper functiond for printing array of matches
+ */
+void print_teams (team* teams, int number_of_teams) {
 }
 
 /*
