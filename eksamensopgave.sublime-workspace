@@ -4,15 +4,43 @@
 		"selected_items":
 		[
 			[
-				"team",
-				"team_out_score"
+				"tea",
+				"teams"
 			],
 			[
-				"numer",
-				"number_of_lines_in_file"
+				"match",
+				"matches"
+			],
+			[
+				"hom",
+				"Home"
+			],
+			[
+				"home",
+				"team_home"
+			],
+			[
+				"team",
+				"team"
+			],
+			[
+				"num",
+				"number_of_teams"
+			],
+			[
+				"tams",
+				"teams"
+			],
+			[
+				"str",
+				"strcmp"
 			],
 			[
 				"number",
+				"number_of_teams"
+			],
+			[
+				"numer",
 				"number_of_lines_in_file"
 			],
 			[
@@ -22,10 +50,6 @@
 			[
 				"team_home",
 				"team_home_score"
-			],
-			[
-				"tea",
-				"team_home"
 			],
 			[
 				"team_",
@@ -70,10 +94,6 @@
 			[
 				"partic",
 				"participants"
-			],
-			[
-				"match",
-				"matchIndex"
 			],
 			[
 				"matched_",
@@ -161,10 +181,6 @@
 			],
 			[
 				"stri",
-				"string"
-			],
-			[
-				"str",
 				"string"
 			],
 			[
@@ -498,22 +514,6 @@
 			[
 				"fa",
 				"fadeinElements"
-			],
-			[
-				"Fa",
-				"FadeinOnScroll"
-			],
-			[
-				"na",
-				"navigation__link"
-			],
-			[
-				"nav",
-				"navigation__item"
-			],
-			[
-				"c",
-				"contact"
 			]
 		]
 	},
@@ -701,6 +701,7 @@
 	},
 	"file_history":
 	[
+		"/Users/emilbaekdahl/Google Drive/AAU/Datalogi/1-semester/IMPR/eksamensopgave/superliga.c",
 		"/Users/emilbaekdahl/Development/arbejde/goodiepack/app/app/routes/customer/goodie.js",
 		"/Users/emilbaekdahl/Development/arbejde/goodiepack/app/app/controllers/goodie/index.js",
 		"/Users/emilbaekdahl/Development/arbejde/goodiepack/app/app/models/goodie.js",
@@ -827,12 +828,11 @@
 		"/Users/emilbaekdahl/Development/pos/pos_app/webpack.config.js",
 		"/Users/emilbaekdahl/Development/pos/pos_app/app/assets/stylesheets/main.scss",
 		"/Users/emilbaekdahl/Development/pos/pos_app/app/board/BoardContainer.jsx",
-		"/Users/emilbaekdahl/Google Drive/AAU/Datalogi/1. semester/Projekter/P1: Skemalægning i folkeskolen - B2-21/p1-rapport/tex/chapters/interessentanalyse/statslige-instanser.tex",
-		"/Users/emilbaekdahl/Google Drive/AAU/Datalogi/1. semester/Projekter/P1: Skemalægning i folkeskolen - B2-21/p1-rapport/tex/chapters/interessentanalyse/skolerne.tex"
+		"/Users/emilbaekdahl/Google Drive/AAU/Datalogi/1. semester/Projekter/P1: Skemalægning i folkeskolen - B2-21/p1-rapport/tex/chapters/interessentanalyse/statslige-instanser.tex"
 	],
 	"find":
 	{
-		"height": 36.0
+		"height": 52.0
 	},
 	"find_in_files":
 	{
@@ -851,6 +851,21 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"   /* Match ",
+			"team_compare",
+			"ompare (void* a, void* b)",
+			"team",
+			".score",
+			"void*",
+			"+",
+			"potsin",
+			"score.total",
+			"i",
+			"strcpy",
+			"i",
+			"home",
+			"get_team_score",
+			"create",
 			"le(FILE* fp);",
 			",",
 			"pf",
@@ -963,22 +978,7 @@
 			"gridLabel",
 			"1.2",
 			"1",
-			"false",
-			"console.error(error);",
-			"this.get('i18n')",
-			"t: function t",
-			"_ember[",
-			"_ember",
-			"es",
-			"esversion",
-			"js",
-			"hinting",
-			"js",
-			"i18next-xhr-backend",
-			"import XHR from",
-			"import XHR",
-			"broccoli-sourcemap-concat",
-			"broccoli"
+			"false"
 		],
 		"highlight": true,
 		"in_selection": false,

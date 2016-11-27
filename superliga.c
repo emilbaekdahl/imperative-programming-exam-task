@@ -15,7 +15,7 @@ struct score {
   int total;
 };
 
-struct goals {
+struct wins {
   int home;
   int out;
   int total;
@@ -23,10 +23,14 @@ struct goals {
 
 struct team {
   char    name[4];
-  struct  goals goals;
-  int     points;
+  struct  { int home; int out; int fore; int against; int total_fore; } goals;
+  struct  { int wins; int loses; int ties; int total; } matches; 
+  struct  wins wins;
   int     home_wins;
   int     out_wins;
+  int     loses;
+  int     ties;
+  int     points;
 };
 
 struct date {
@@ -52,11 +56,11 @@ struct match {
 };
 
 /* Type definitions */
-typedef struct match match;
-typedef struct team team;
-typedef struct score score;
-typedef struct time time;
-typedef struct goals goals;
+typedef struct match  match;
+typedef struct team   team;
+typedef struct score  score;
+typedef struct time   time;
+typedef struct wins   wins;
 
 /* Function prototypes */
 void    read_matches                          (char* file_name, match* matches);
@@ -72,7 +76,7 @@ match*  matches_in_time_frame                 (match* matches, int number_of_mat
 time    time_from_string                      (char time_string[6]);
 int     is_match_in_time_frame                (match* match, time* lower, time* upper);
 void    print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
-int     team_compare                          (void* a, void* b);
+int     team_compare                          (const void* a, const void* b);
 
 
 /*
@@ -126,13 +130,12 @@ void read_matches (char* file_name, match* matches) {
 void read_teams (match* matches, int number_of_matches, team* teams, int number_of_teams) {
   int i;
   int j = 0;
-  struct team empty_team = { "", {0, 0, 0}, 0, 0, 0 };
+  struct team empty_team = {};
 
   /* Create teams with names and zero data */
   for (i = 0; i < number_of_teams; i += 2) {
     teams[i] = empty_team;
     strcpy(teams[i].name, matches[j].team_home);
-
     teams[i + 1] = empty_team;
     strcpy(teams[i + 1].name, matches[j].team_out);
     j++;
@@ -141,30 +144,55 @@ void read_teams (match* matches, int number_of_matches, team* teams, int number_
   /* Calculate teams' goals and points */
   for (i = 0; i < number_of_matches; i++) {
     for (j = 0; j < number_of_teams; j++) {
-      /* Increase team's home and out score if in match */
-      if (strcmp(teams[j].name, matches[i].team_home) == 0) {     /* Current team is home team in match */
-        teams[j].goals.home += matches[i].score.home;
-        teams[j].goals.total += matches[i].score.home;
+      /* Current team is home team in match */
+      if (strcmp(teams[j].name, matches[i].team_home) == 0) {
+        /* Increase goals score for and against the team */
+        teams[j].goals.home       += matches[i].score.home;
+        teams[j].goals.total_fore += matches[i].score.home;
+        teams[j].goals.fore       += matches[i].score.home;
+        teams[j].goals.against    += matches[i].score.out;
 
-        /* Increase home team's points if match won or tie */
-        if (matches[i].score.home > matches[i].score.out) {
+        /* Increae team's total played matches */
+        teams[j].matches.total++;
+
+        /* Increase home team's points based on match result */
+        if (matches[i].score.home > matches[i].score.out) {       /* Won */
           teams[j].points += 3;
+          teams[j].wins.home++;
+          teams[j].matches.wins++;
         }
-        else if (matches[i].score.home == matches[i].score.out) {
+        else if (matches[i].score.home == matches[i].score.out) { /* Tie */
           teams[j].points += 1;
+          teams[j].matches.ties++;
+        } 
+        else {                                                    /* Lost */
+          teams[j].matches.loses++;
         }
       }
 
-      else if (strcmp(teams[j].name, matches[i].team_out) == 0) {   /* Current team i out team in match */
-        teams[j].goals.out += matches[i].score.out;
-        teams[j].goals.total += matches[i].score.out;
+      /* Current team is out team in match */
+      else if (strcmp(teams[j].name, matches[i].team_out) == 0) {
+        /* Increase goals score for and against the team */
+        teams[j].goals.home       += matches[i].score.out;
+        teams[j].goals.total_fore += matches[i].score.out;
+        teams[j].goals.fore       += matches[i].score.out;
+        teams[j].goals.against    += matches[i].score.home;
 
-        /* Increase home team's points if match won or tie */
-        if (matches[i].score.out > matches[i].score.home) {
+        /* Increae team's total played matches */
+        teams[j].matches.total++;
+
+        /* Increase home team's points based on match result */
+        if (matches[i].score.out > matches[i].score.home) {       /* Won */
           teams[j].points += 3;
+          teams[j].wins.out++;
+          teams[j].matches.wins++;
         }
-        else if (matches[i].score.out == matches[i].score.home) {
+        else if (matches[i].score.out == matches[i].score.home) { /* Tie */
           teams[j].points += 1;
+          teams[j].matches.ties++;
+        }
+        else {                                                    /* Lost */
+          teams[j].matches.loses++;
         }
       }
     }
@@ -353,7 +381,7 @@ int is_match_in_time_frame (match* match, time* lower, time* upper) {
   if (match->time.hours > lower->hours && match->time.hours < upper->hours) { /* Match is in the hour time frame */
     return 1;
   }
-  else if (match->time.hours == lower->hours) {                               /* Match hour is lower hour */
+  else if (match->time.hours == lower->hours) {     /* Match hour is lower hour */
     if (match->time.minutes >= lower->minutes) {
       return 1;
     }
@@ -361,7 +389,7 @@ int is_match_in_time_frame (match* match, time* lower, time* upper) {
       return 0;
     }
   }
-  else if (match->time.hours == upper->hours) {                               /* Match hour is upper hour */
+  else if (match->time.hours == upper->hours) {     /* Match hour is upper hour */
     if (match->time.minutes <= upper->minutes) {
       return 1;
     }
@@ -380,13 +408,17 @@ int is_match_in_time_frame (match* match, time* lower, time* upper) {
 void print_result (match* matches, int number_of_matches, team* teams, int number_of_teams) {
   int i, j;
 
-  /* Sort teams */
+  /* Sort teams with helper function team_compare */
   qsort(teams, number_of_teams, sizeof(team), team_compare);
 
-  /* Print teams */
-  printf("Team \t Points\n");
+  /* Print results table */
+  printf("Team \t Points \t Total matches \t Wins \t Loses \t Ties \t Goals for \t Goals against \t Goal difference\n");
+
   for (i = 0; i < number_of_teams; i++) {
-    printf("%-3s \t %d\n", teams[i].name, teams[i].points);
+    printf("%-3s \t %-7d \t %-12d \t %-4d \t %-5d \t %-5d \t %-8d \t %-12d \t %d \n", 
+            teams[i].name, teams[i].points, teams[i].matches.total, 
+            teams[i].matches.wins, teams[i].matches.loses, teams[i].matches.ties,
+            teams[i].goals.fore, teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
   }
 }
 
@@ -394,7 +426,7 @@ void print_result (match* matches, int number_of_matches, team* teams, int numbe
  * Helper function for print_result
  * Sorting decision for qsort based on teams' points
  */
-int team_compare (void* a, void* b) {
+int team_compare (const void* a, const void* b) {
   team* team_1 = (team*) a;
   team* team_2 = (team*) b;
 
