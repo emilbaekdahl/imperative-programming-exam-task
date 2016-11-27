@@ -65,9 +65,9 @@ typedef struct wins   wins;
 /* Function prototypes */
 void    read_matches                          (char* file_name, match* matches);
 void    read_teams                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
-team*   read_teams_from_matches               (match* matches, int matches_in_round);
 int     number_of_lines_in_file               (char* file_name);
 int     convert_string_to_number              (char* string_with_separator, int string_length);
+void    decide_action                         (int selector);
 match*  tie_matches                           (match* matches, int number_of_matches);
 void    round_with_less_than_10_goals         (match* matches, int number_of_matches, int* round_number, int* total_goals);
 team*   teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
@@ -77,12 +77,13 @@ time    time_from_string                      (char time_string[6]);
 int     is_match_in_time_frame                (match* match, time* lower, time* upper);
 void    print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
 int     team_compare                          (const void* a, const void* b);
+void    print_to_stdio                        ();
 
 
 /*
  * Main
  */
-int main (void) {
+int main (int argc, char* argv[]) {
   char *file_name = "superliga-2015-2016";
   
   int number_of_matches = number_of_lines_in_file(file_name);
@@ -94,9 +95,51 @@ int main (void) {
   read_matches(file_name, matches);
   read_teams(matches, number_of_matches, teams, number_of_teams);
 
-  print_result(matches, number_of_matches, teams, number_of_teams);
+  /* Print everything to stdio if argument is passed */
+  int i;
+  for (i = 0; i < argc; i++) {
+    if (strcmp(argv[i], "--print") == 0) {
+      print_to_stdio();
+    }
+  }
+
+  int selector;
+  do {
+    printf("You have the following options\n"
+         "\t(1) List tie matches\n"
+         "\t(2) List round with less than 10 goals\n"
+         "\t(3) List teams winning more matches out than home\n"
+         "\t(4) List matches on Sundays between 13:15 and 14:15\n"
+         "\t(5) Displat Superliga 2015-2016 result\n");
+    scanf(" %d", &selector);
+  } while (selector < 1 || selector > 5);
+
+  decide_action(selector);
+
+  //print_result(matches, number_of_matches, teams, number_of_teams);
 
   return 0;
+}
+
+/*
+ * Perform action based on user input
+ */
+void decide_action (int selector) {
+  switch (selector) {
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      
+      break;
+    case 4:
+      break;
+    case 5:
+      break;
+    default:
+      break;
+  }
 }
 
 /*
@@ -416,9 +459,9 @@ void print_result (match* matches, int number_of_matches, team* teams, int numbe
 
   for (i = 0; i < number_of_teams; i++) {
     printf("%-3s \t %-7d \t %-12d \t %-4d \t %-5d \t %-5d \t %-8d \t %-12d \t %d \n", 
-            teams[i].name, teams[i].points, teams[i].matches.total, 
-            teams[i].matches.wins, teams[i].matches.loses, teams[i].matches.ties,
-            teams[i].goals.fore, teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
+            teams[i].name,          teams[i].points,        teams[i].matches.total, 
+            teams[i].matches.wins,  teams[i].matches.loses, teams[i].matches.ties,
+            teams[i].goals.fore,    teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
   }
 }
 
@@ -439,4 +482,11 @@ int team_compare (const void* a, const void* b) {
   else {
     return 0;
   }
+}
+
+/*
+ * Print all data to standard output
+ */
+void print_to_stdio () {
+
 }
