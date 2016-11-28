@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"round",
+				"round_with_less_than_10_goals"
+			],
+			[
 				"nu",
 				"number_of_tie_matches"
 			],
@@ -510,10 +514,6 @@
 			[
 				"goodie-creaot",
 				"goodie-creator-preview-image"
-			],
-			[
-				"face",
-				"facebook-square"
 			]
 		]
 	},
