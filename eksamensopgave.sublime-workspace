@@ -4,12 +4,48 @@
 		"selected_items":
 		[
 			[
-				"pri",
-				"printf\tprintf …"
+				"si",
+				"size"
+			],
+			[
+				"match",
+				"matches_in_time_frame"
+			],
+			[
+				"matches",
+				"matches_in_time_frame"
+			],
+			[
+				"mat",
+				"matches_in_time_frame"
 			],
 			[
 				"sub",
-				"sub_teams"
+				"sub_matches_in_time_frame"
+			],
+			[
+				"tie",
+				"tie_matches_counter"
+			],
+			[
+				"matc_",
+				"match_array"
+			],
+			[
+				"tie_match",
+				"tie_matches_counter"
+			],
+			[
+				"sif",
+				"sizeof"
+			],
+			[
+				"zero",
+				"zero_team"
+			],
+			[
+				"pri",
+				"printf\tprintf …"
 			],
 			[
 				"numer",
@@ -28,16 +64,8 @@
 				"number_of_teams"
 			],
 			[
-				"mat",
-				"matches"
-			],
-			[
 				"number_of",
 				"number_of_matches"
-			],
-			[
-				"si",
-				"size_of_sub_matches"
 			],
 			[
 				"nu",
@@ -50,10 +78,6 @@
 			[
 				"nuber",
 				"number_of_matches"
-			],
-			[
-				"matches",
-				"matches"
 			],
 			[
 				"print",
@@ -118,10 +142,6 @@
 			[
 				"tea",
 				"teams"
-			],
-			[
-				"match",
-				"matches"
 			],
 			[
 				"hom",
@@ -494,26 +514,6 @@
 			[
 				"sco",
 				"scroller"
-			],
-			[
-				"scol",
-				"scrollAmount"
-			],
-			[
-				"scroll",
-				"scrollLeft"
-			],
-			[
-				"category-track-con",
-				"category-track-content"
-			],
-			[
-				"categ",
-				"categoryTracks"
-			],
-			[
-				"overflow",
-				"overflow-x"
 			]
 		]
 	},
@@ -855,6 +855,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"matches_in_time_frame",
+			"print_teams",
+			"match_array",
+			"matches",
+			"->",
+			"tie_matches",
+			"*  ",
+			"tie_matches",
+			"int",
+			"sub_matches",
+			"teams_winning_out",
+			"sub_teams",
+			"ties",
 			"  printf(\"File closed\\n\");\n",
 			"  printf(\"File opened\\n\");\n",
 			"number_of_lines_in_file",
@@ -969,20 +982,7 @@
 			"guest_api",
 			"liquid",
 			"goodie-page-goodie-title",
-			"text-transform",
-			".overlay-info-layout",
-			".overlay-info-layout-content",
-			"<h1>",
-			"expired-overlay-status",
-			"h1",
-			".expired-overlay-status",
-			"<input",
-			"input",
-			".desktop-layout",
-			".layout-contaerin",
-			".liquid-container",
-			".desktop-layout-scroll-container",
-			"p"
+			"text-transform"
 		],
 		"highlight": true,
 		"in_selection": false,

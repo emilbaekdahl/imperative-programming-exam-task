@@ -66,22 +66,31 @@ typedef struct match_array {
 } match_array;
 
 /* Function prototypes */
-void    read_matches                          (char* file_name, match* matches);
-void    read_teams                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
-int     number_of_lines_in_file               (char* file_name);
-int     convert_string_to_number              (char* string_with_separator, int string_length);
-match_array  tie_matches                      (match* matches, int number_of_matches);
-void    round_with_less_than_10_goals         (match* matches, int number_of_matches, int* round_number, int* total_goals);
-team_array   teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
-void    team_with_fewest_home_match_audience  (match* matches, int number_of_matches, char *team_name, int *audience);
-match_array  matches_in_time_frame                 (match* matches, int number_of_matches, char lower[6], char upper[6], char* week_day);
-time    time_from_string                      (char time_string[6]);
-int     is_match_in_time_frame                (match* match, time* lower, time* upper);
-void    print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
-int     team_compare                          (const void* a, const void* b);
-void    print_matches                         (match_array* matches);
-void    print_teams                           (team_array* teams);
-void    print_all_to_std                      (match* matches, int number_of_matches, team* teams, int number_of_teams);
+/* Logic functions */
+void        read_matches                          (char* file_name, match* matches);
+void        read_teams                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
+int         number_of_lines_in_file               (char* file_name);
+int         convert_string_to_number              (char* string_with_separator, int string_length);
+match_array tie_matches                           (match* matches, int number_of_matches);
+void        round_with_less_than_10_goals         (match* matches, int number_of_matches, int* round_number, int* total_goals);
+team_array  teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
+void        team_with_fewest_home_match_audience  (match* matches, int number_of_matches, char *team_name, int *audience);
+match_array matches_in_time_frame                 (match* matches, int number_of_matches, char lower[6], char upper[6], char* week_day);
+time        time_from_string                      (char time_string[6]);
+int         is_match_in_time_frame                (match* match, time* lower, time* upper);
+void        print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
+int         team_compare                          (const void* a, const void* b);
+
+/* Print functions */
+void        print_matches                               (match_array* matches);
+void        print_teams                                 (team_array* teams);
+void        print_tie_matches                           (match* matches, int number_of_matches);
+void        print_round_width_less_than_10_goals        (match* matches, int number_of_matches);
+void        print_teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
+void        print_team_with_fewest_home_match_audience  (match* matches, int number_of_matches);
+void        print_matches_in_time_frame                 (match* matches, int number_of_matches);
+void        print_team_winning_out                      (team_array* teams);
+void        print_all_to_std                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
 
 /*
  * Main
@@ -102,25 +111,12 @@ int main (int argc, char* argv[]) {
   int i;
   for (i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--print") == 0) {
-      // printf("List of tie matches with more than 4 goals total \n");
-      // match* ties = tie_matches(matches, number_of_matches);
-      // printf("%d\n", (int)sizeof(ties));
-      // print_matches(ties, sizeof(ties));
-      // free(ties);
-
-      // // printf("\nRound with less than 10 goals scored\n");
-      // // int round;
-      // // int goals;
-      // // round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
-      // // printf("Round %d had %d goals\n", round, goals);  
-
-      // team* sub_teams = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-      // printf("%d\n", (int)sizeof(sub_teams));
-      // print_teams(sub_teams, sizeof(sub_teams));
-      // free(sub_teams);  
-
-
-      // return 0;
+      print_tie_matches(matches, number_of_matches);
+      print_round_width_less_than_10_goals(matches, number_of_matches);
+      print_teams_winning_out(matches, number_of_matches, teams, number_of_teams);
+      print_team_with_fewest_home_match_audience(matches, number_of_matches);
+      print_matches_in_time_frame(matches, number_of_matches);
+      print_result(matches, number_of_matches, teams, number_of_teams);
     }
   }
 
@@ -144,32 +140,19 @@ int main (int argc, char* argv[]) {
     return 0;
   }
   else if (selector == 1) {
-    match_array sub_matches_ties = tie_matches(matches, number_of_matches);
-    print_matches(&sub_matches_ties);
+    print_tie_matches(matches, number_of_matches);
   }
   else if (selector == 2) {
-    int round;
-    int goals;
-    round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
-    printf("Round %d had %d goals\n", round, goals);
+    print_round_width_less_than_10_goals(matches, number_of_matches);
   }
   else if (selector == 3) {
-    team_array sub_teams_winning_out = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-    print_teams(&sub_teams_winning_out);
+    print_teams_winning_out(matches, number_of_matches, teams, number_of_teams);
   }
   else if (selector == 4) {
-    char team_name[4];
-    int audience;
-    team_with_fewest_home_match_audience(matches, number_of_matches, team_name, &audience);
-    printf("%s had %d in a home match in 2015\n", team_name, audience);
+    print_team_with_fewest_home_match_audience(matches, number_of_matches);
   }
   else if (selector == 5) {
-    char start[] = "13:15";
-    char end[] = "14:15";
-    char week_day[] = "Son";
-
-    match_array sub_matches_in_time_frame = matches_in_time_frame(matches, number_of_matches, start, end, week_day);
-    print_matches(&sub_matches_in_time_frame);
+    print_matches_in_time_frame(matches, number_of_matches);
   }
   else if (selector == 6) {
     print_result(matches, number_of_matches, teams, number_of_teams);
@@ -540,6 +523,39 @@ void print_teams (team_array* teams) {
   for (i = 0; i < teams->size; i++) {
     printf("%s\n", teams->teams[i].name);
   }
+}
+
+void print_tie_matches (match* matches, int number_of_matches) {
+  match_array sub_matches_ties = tie_matches(matches, number_of_matches);
+  print_matches(&sub_matches_ties);
+}
+
+void print_round_width_less_than_10_goals (match* matches, int number_of_matches) {
+  int round;
+  int goals;
+  round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
+  printf("Round %d had %d goals\n", round, goals);
+}
+
+void print_teams_winning_out(match* matches, int number_of_matches, team* teams, int number_of_teams) {
+  team_array sub_teams_winning_out = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
+  print_teams(&sub_teams_winning_out);
+}
+
+void print_team_with_fewest_home_match_audience (match* matches, int number_of_matches) {
+  char team_name[4];
+  int audience;
+  team_with_fewest_home_match_audience(matches, number_of_matches, team_name, &audience);
+  printf("%s had %d in a home match in 2015\n", team_name, audience);
+}
+
+void print_matches_in_time_frame (match* matches, int number_of_matches) {
+  char start[] = "13:15";
+  char end[] = "14:15";
+  char week_day[] = "Son";
+
+  match_array sub_matches_in_time_frame = matches_in_time_frame(matches, number_of_matches, start, end, week_day);
+  print_matches(&sub_matches_in_time_frame);
 }
 
 /*
