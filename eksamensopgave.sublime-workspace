@@ -4,60 +4,100 @@
 		"selected_items":
 		[
 			[
-				"round",
-				"round_with_less_than_10_goals"
+				"pri",
+				"printf\tprintf …"
 			],
 			[
-				"nu",
-				"number_of_tie_matches"
+				"sub",
+				"sub_teams"
 			],
 			[
-				"mat",
-				"match"
+				"numer",
+				"number_of_teams"
 			],
 			[
-				"print_",
-				"print_matches"
+				"team_wii",
+				"teams_winning_out"
 			],
 			[
 				"team",
-				"team_out"
-			],
-			[
-				"mach",
-				"matches"
+				"team_size"
 			],
 			[
 				"number",
 				"number_of_teams"
 			],
 			[
-				"print",
-				"print_teams"
+				"mat",
+				"matches"
 			],
 			[
 				"number_of",
+				"number_of_matches"
+			],
+			[
+				"si",
+				"size_of_sub_matches"
+			],
+			[
+				"nu",
+				"number_of_matches"
+			],
+			[
+				"math",
+				"matches"
+			],
+			[
+				"nuber",
+				"number_of_matches"
+			],
+			[
+				"matches",
+				"matches"
+			],
+			[
+				"print",
+				"print_matches"
+			],
+			[
+				"teams_",
+				"teams_winning_out"
+			],
+			[
+				"te",
+				"teams_sub"
+			],
+			[
+				"prin",
+				"printf\tprintf …"
+			],
+			[
+				"teams",
+				"teams_sub"
+			],
+			[
+				"num",
 				"number_of_teams"
+			],
+			[
+				"round",
+				"round_with_less_than_10_goals"
+			],
+			[
+				"print_",
+				"print_matches"
+			],
+			[
+				"mach",
+				"matches"
 			],
 			[
 				"pr",
 				"print"
 			],
 			[
-				"num",
-				"number_of_ties"
-			],
-			[
 				"numb",
 				"number_of_ties"
-			],
-			[
-				"pri",
-				"printf\tprintf …"
-			],
-			[
-				"numer",
-				"number_of_matches"
 			],
 			[
 				"deci",
@@ -114,10 +154,6 @@
 			[
 				"FIL",
 				"FILE_NAME"
-			],
-			[
-				"te",
-				"team_out_score"
 			],
 			[
 				"team_hom",
@@ -478,42 +514,6 @@
 			[
 				"overflow",
 				"overflow-x"
-			],
-			[
-				"over",
-				"overflow-y"
-			],
-			[
-				"overf",
-				"overflow-x"
-			],
-			[
-				"padd",
-				"padding"
-			],
-			[
-				"ca",
-				"category-track-control"
-			],
-			[
-				"das",
-				"dashboard-sidemenu-logo"
-			],
-			[
-				"ori",
-				"organization"
-			],
-			[
-				"out",
-				"outputDiv"
-			],
-			[
-				"goodie-wh",
-				"goodie-thumbnail-title-wrapper"
-			],
-			[
-				"goodie-creaot",
-				"goodie-creator-preview-image"
 			]
 		]
 	},
@@ -572,10 +572,14 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 201.0,
-		"last_filter": "javasc",
+		"height": 183.0,
+		"last_filter": "build",
 		"selected_items":
 		[
+			[
+				"build",
+				"Build With: C"
+			],
 			[
 				"javasc",
 				"Set Syntax: JavaScript"
@@ -681,7 +685,7 @@
 				"Set Syntax: Sass"
 			]
 		],
-		"width": 467.0
+		"width": 374.0
 	},
 	"console":
 	{
@@ -832,7 +836,7 @@
 	],
 	"find":
 	{
-		"height": 52.0
+		"height": 49.0
 	},
 	"find_in_files":
 	{
@@ -851,6 +855,21 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"  printf(\"File closed\\n\");\n",
+			"  printf(\"File opened\\n\");\n",
+			"number_of_lines_in_file",
+			"fopen",
+			"file_handle",
+			"FILE",
+			"teams_winning_out",
+			"print_tie_matches",
+			"teams_winning_out",
+			"print_tie",
+			"print_tie_matches",
+			"tie_mat",
+			"matches_in_time_frame",
+			"teams_sub",
+			"teams_w",
 			"fopen",
 			"d",
 			"print_tie_matches",
@@ -963,22 +982,7 @@
 			".layout-contaerin",
 			".liquid-container",
 			".desktop-layout-scroll-container",
-			"p",
-			"mini",
-			"uvm",
-			"reskolere",
-			"char* product_",
-			"product_code",
-			"class",
-			"resolve",
-			"webpackDevMiddleware",
-			"console.log('dfg')",
-			"dfg",
-			"(unit)",
-			"node at",
-			"true",
-			"resolve",
-			"compiler"
+			"p"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -995,7 +999,7 @@
 	},
 	"incremental_find":
 	{
-		"height": 36.0
+		"height": 33.0
 	},
 	"input":
 	{
@@ -1043,7 +1047,7 @@
 	"pinned_build_system": "Packages/User/C.sublime-build",
 	"replace":
 	{
-		"height": 68.0
+		"height": 62.0
 	},
 	"save_all_on_build": true,
 	"select_file":
