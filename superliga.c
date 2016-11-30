@@ -1,8 +1,8 @@
-/*
-  Purpose:      Handling and manuipulation of data in superliga-2015-2016
-  Developed by: Emil S. Bækdahl
-  Date:         November 24, 2016 
-*/
+/* =========================================================================== */
+/* | Purpose:      Handling and manuipulation of data in superliga-2015-2016 | */
+/* | Developed by: Emil S. Bækdahl                                           | */
+/* | Finish date:  20/11/2016                                                | */
+/* =========================================================================== */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,10 +26,26 @@ typedef struct time {
 } time;
 
 typedef struct team {
-  char    name[4];
-  struct  { int home; int out; int total; int fore; int against; int difference; } goals;
-  struct  { struct { int home; int out; int total; } wins; int old_wins; int loses; int ties; int total; } matches;
-  struct  { int home; int out; int total; } wins;
+  char name[4];
+  struct { 
+    int home;
+    int out; 
+    int total; 
+    int fore; 
+    int against; 
+    int difference;
+  } goals;
+  struct {
+    struct {
+      int home; 
+      int out; 
+      int total;
+    } wins; 
+    int old_wins; 
+    int loses; 
+    int ties; 
+    int total;
+  } matches;
   int     points;
   int     total_home_audience;
 } team;
