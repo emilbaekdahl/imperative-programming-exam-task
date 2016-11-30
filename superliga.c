@@ -8,36 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Structure definition */
-typedef struct score {
-  int home;
-  int out;
-  int total;
-} score;
+#define NUMBER_OF_MATCHES 198
+#define NUMBER_OF_TEAMS 12
 
-typedef struct wins {
-  int home;
-  int out;
-  int total;
-} wins;
-
-typedef struct team {
-  char    name[4];
-  struct  { int home; int out; int fore; int against; int total_fore; } goals;
-  struct  { int wins; int loses; int ties; int total; } matches; 
-  struct  wins wins;
-  int     home_wins;
-  int     out_wins;
-  int     loses;
-  int     ties;
-  int     points;
-} team;
-
-typedef struct team_array {
-  int   size;
-  team* teams;
-} team_array;
-
+/* ========================= */
+/* | Structure definitions | */
+/* ========================= */
 typedef struct date {
   int day;
   int month;
@@ -49,6 +25,15 @@ typedef struct time {
   int minutes;
 } time;
 
+typedef struct team {
+  char    name[4];
+  struct  { int home; int out; int total; int fore; int against; int difference; } goals;
+  struct  { struct { int home; int out; int total; } wins; int old_wins; int loses; int ties; int total; } matches;
+  struct  { int home; int out; int total; } wins;
+  int     points;
+  int     total_home_audience;
+} team;
+
 typedef struct match {
   int     round;
   char    week_day[4];
@@ -56,109 +41,138 @@ typedef struct match {
   struct  time time;
   char    team_home[4];
   char    team_out[4];
-  struct  score score;
+  struct  { int home; int out; int total; } score;
   int     audience;
 } match;
+
+/* Array types for keeping track of size and content of dynamic arrays */
+typedef struct team_array {
+  int   size;
+  team* teams;
+} team_array;
 
 typedef struct match_array {
   int     size;
   match*  matches;
 } match_array;
 
+/* =================== */
 /* Function prototypes */
+/* =================== */
+
 /* Logic functions */
-void        read_matches                          (char* file_name, match* matches);
-void        read_teams                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
-int         number_of_lines_in_file               (char* file_name);
-int         convert_string_to_number              (char* string_with_separator, int string_length);
-match_array tie_matches                           (match* matches, int number_of_matches);
-void        round_with_less_than_10_goals         (match* matches, int number_of_matches, int* round_number, int* total_goals);
-team_array  teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
-void        team_with_fewest_home_match_audience  (match* matches, int number_of_matches, char *team_name, int *audience);
-match_array matches_in_time_frame                 (match* matches, int number_of_matches, char lower[6], char upper[6], char* week_day);
-time        time_from_string                      (char time_string[6]);
-int         is_match_in_time_frame                (match* match, time* lower, time* upper);
-void        print_result                          (match* matches, int number_of_matches, team* teams, int number_of_teams);
-int         team_compare                          (const void* a, const void* b);
+void read_matches (char* file_name, match* matches);
+void read_teams (match* matches, team* teams);
+match_array tie_matches (match* matches);
+int round_with_less_than_10_goals (match* matches, int* round_number, int* total_goals);
+team_array teams_winning_out (team* teams);
+void team_with_fewest_home_match_audience (match* matches, team* teams, char *team_name, int *audience);
+match_array matches_in_time_frame (match* matches, char lower[6], char upper[6], char* week_day);
 
-/* Print functions */
-void        print_matches                               (match_array* matches);
-void        print_teams                                 (team_array* teams);
-void        print_tie_matches                           (match* matches, int number_of_matches);
-void        print_round_width_less_than_10_goals        (match* matches, int number_of_matches);
-void        print_teams_winning_out                     (match* matches, int number_of_matches, team* teams, int number_of_teams);
-void        print_team_with_fewest_home_match_audience  (match* matches, int number_of_matches);
-void        print_matches_in_time_frame                 (match* matches, int number_of_matches);
-void        print_team_winning_out                      (team_array* teams);
-void        print_all_to_std                            (match* matches, int number_of_matches, team* teams, int number_of_teams);
+/* Functions for tasks */
+void print_tie_matches (match* matches);
+void print_round_width_less_than_10_goals (match* matches);
+void print_teams_winning_out (match* matches, team* teams);
+void print_team_with_fewest_home_match_audience (match* matches, team* teams);
+void print_matches_in_time_frame (match* matches, char* start, char* end, char* week_day);
+void print_team_winning_out (team_array* teams);
+void print_result (match* matches, team* teams);
 
-/*
- * Main
- */
+/* Helper functions */
+int convert_string_to_number (char* string_with_separator, int string_length);
+int is_match_in_time_frame (match* match, time* lower, time* upper);
+time time_from_string (char time_string[6]);
+int team_sort_by_points (team* team_1, team* team_2);
+int team_sort_by_goal_difference (team* team_1, team* team_2);
+int team_sort_by_total_goals (team* team_1, team* team_2);
+int team_sort_by_name (team* team_1, team* team_2);
+int team_compare (const void* a, const void* b);
+
+/* Print helpers */
+void print_menu ();
+void print_matches (match_array* matches);
+void print_round (match* matches, int round_number);
+void print_teams (team_array* teams);
+
+/* ======== */
+/* | Main | */
+/* ======== */
 int main (int argc, char* argv[]) {
+  int i, selector;
   char *file_name = "superliga-2015-2016";
   
-  int number_of_matches = number_of_lines_in_file(file_name);
-  int number_of_teams = 12;
-
-  struct match matches[number_of_matches];
-  struct team teams[number_of_teams];
+  /* Init and load matches and teams */
+  struct match matches[NUMBER_OF_MATCHES];
+  struct team teams[NUMBER_OF_TEAMS];
 
   read_matches(file_name, matches);
-  read_teams(matches, number_of_matches, teams, number_of_teams);
+  read_teams(matches, teams);
 
-  /* Print everything to stdio if argument is passed */
-  int i;
+  /* Print everything to stdio if --print is passed */
   for (i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--print") == 0) {
-      print_tie_matches(matches, number_of_matches);
-      print_round_width_less_than_10_goals(matches, number_of_matches);
-      print_teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-      print_team_with_fewest_home_match_audience(matches, number_of_matches);
-      print_matches_in_time_frame(matches, number_of_matches);
-      print_result(matches, number_of_matches, teams, number_of_teams);
+      print_tie_matches(matches);
+      print_round_width_less_than_10_goals(matches);
+      print_teams_winning_out(matches, teams);
+      print_team_with_fewest_home_match_audience(matches, teams);
+      print_matches_in_time_frame(matches, "13:15", "14:15", "Son");
+      print_result(matches, teams);
+      return 0;
     }
   }
 
-  /* Dialog if --print argument not present */ 
-  int selector;
-  do {
-    printf("You have the following options\n"
-         "  (0) End program\n"
-         "  (1) List tie matches with more than 4 goals scored\n"
-         "  (2) List round with less than 10 goals\n"
-         "  (3) List teams winning more matches out than home\n"
-         "  (4) Find the team with fewest audience at home matches in 2015\n"
-         "  (5) List matches on Sundays between 13:15 and 14:15\n"
-         "  (6) Displat Superliga 2015-2016 result\n"
-         "Enter 1-6: ");
+  /* Dialog */ 
+  while (1) {
+    print_menu();
     scanf(" %d", &selector);
-  } while (selector < 0 || selector > 6);
 
-  /* Perform action based on input */
-  if (selector == 0) {
-    return 0;
-  }
-  else if (selector == 1) {
-    print_tie_matches(matches, number_of_matches);
-  }
-  else if (selector == 2) {
-    print_round_width_less_than_10_goals(matches, number_of_matches);
-  }
-  else if (selector == 3) {
-    print_teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-  }
-  else if (selector == 4) {
-    print_team_with_fewest_home_match_audience(matches, number_of_matches);
-  }
-  else if (selector == 5) {
-    print_matches_in_time_frame(matches, number_of_matches);
-  }
-  else if (selector == 6) {
-    print_result(matches, number_of_matches, teams, number_of_teams);
+    /* Perform action based on input */
+    if (selector == 0) {
+      return 0;
+    }
+    else if (selector == 1) {
+      print_tie_matches(matches);
+    }
+    else if (selector == 2) {
+      print_round_width_less_than_10_goals(matches);
+    }
+    else if (selector == 3) {
+      print_teams_winning_out(matches, teams);
+    }
+    else if (selector == 4) {
+      print_team_with_fewest_home_match_audience(matches, teams);
+    }
+    else if (selector == 5) {
+      char start[6]; char end[6]; char week_day[4];
+      printf("Enter start time (hh:mm), end time (hh:mm) and day (ex. Mon, Son) (sepereated by space): ");
+      scanf(" %s %s %s", start, end, week_day);
+      print_matches_in_time_frame(matches, start, end, week_day);
+    }
+    else if (selector == 6) {
+      print_result(matches, teams);
+    }
   }
 
   return 0;
+}
+
+/*
+ * Priting the main menu for user input
+ */
+void print_menu () {
+  printf("\n"
+         "====================================================================\n"
+         "|                     SUPERLIGA 2015-2016 MENU                     |\n"
+         "====================================================================\n");
+  printf("| (0) | End program                                                |\n"
+         "| (1) | List tie matches with more than 4 goals scored             |\n"
+         "| (2) | List round with less than 10 goals                         |\n");
+  printf("| (3) | List teams winning more matches out than home              |\n"
+         "| (4) | Find the team with fewest audience at home matches in 2015 |\n"
+         "| (5) | List matches in specific time frame                        |\n"
+         "| (6) | Display Superliga 2015-2016 result                         |\n"
+         "====================================================================\n"
+         "\nEnter your choice (0-6) here: ");
 }
 
 /*
@@ -167,11 +181,11 @@ int main (int argc, char* argv[]) {
 void read_matches (char* file_name, match* matches) {
   FILE* file_handle = fopen(file_name, "r");
   char buffer[100];
-  int matches_length = number_of_lines_in_file(file_name); 
-  int i;
   char temp_audience[7];
+  int i;
 
-  for (i = 0; i < matches_length; i++) {
+  /* Loop lines in file and assign to matches */
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
     fgets(buffer, sizeof(buffer), file_handle);
     sscanf(buffer, 
            " R%d %s %d/%d/%d %d.%d %s - %s %d - %d %s",
@@ -183,28 +197,8 @@ void read_matches (char* file_name, match* matches) {
     matches[i].score.total = matches[i].score.home + matches[i].score.out;
     matches[i].audience = convert_string_to_number(temp_audience, sizeof(temp_audience));
   }
+
   fclose(file_handle);
-}
-
-/*
- * Helper function for read_matches
- * Calculate number of lines in file with name file_name
- */
-int number_of_lines_in_file (char* file_name) {
-  FILE *fp = fopen(file_name, "r");
-
-  int lines = 0;
-  int chr;
-
-  while ((chr = fgetc(fp)) != EOF) {
-    if (chr == '\n') {
-      lines++;
-    }
-  }
-
-  fclose(fp);
-  
-  return lines + 1;
 }
 
 /*
@@ -214,29 +208,35 @@ int number_of_lines_in_file (char* file_name) {
 int convert_string_to_number (char* string_with_separator, int string_length) {
   int i;
   int j = 0;
-  char string_without_separator[string_length];
+  char string_without_separator[10];
 
-  for (i = 0; i < string_length; i++) {
+  /* Loop chars of original string and 
+     copy to new string unless char is '.' */
+  for (i = 0; i < 10; i++) {
     if (string_with_separator[i] != '.') {
       string_without_separator[j] = string_with_separator[i];
       j++;
     }
   }
 
+  /* Return string as int */
   return atoi(string_without_separator);
 }
 
 /*
  * Read teams into array based on matches
  */
-void read_teams (match* matches, int number_of_matches, team* teams, int number_of_teams) {
+void read_teams (match* matches, team* teams) {
   int i;
   int j = 0;
 
-  struct  team zero_team = { 0 };
+  /* Default team with all zeros.
+     Prevents failure in later increments */
+  struct team zero_team;
+  memset(&zero_team, 0, sizeof(zero_team));
 
-  /* Create teams with names and zero data */
-  for (i = 0; i < number_of_teams; i += 2) {
+  /* Create all teams with names and zero data */
+  for (i = 0; i < NUMBER_OF_TEAMS; i += 2) {
     teams[i] = zero_team;
     strcpy(teams[i].name, matches[j].team_home);
     teams[i + 1] = zero_team;
@@ -245,30 +245,36 @@ void read_teams (match* matches, int number_of_matches, team* teams, int number_
   }
 
   /* Calculate teams' goals and points */
-  for (i = 0; i < number_of_matches; i++) {
-    for (j = 0; j < number_of_teams; j++) {
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
+    for (j = 0; j < NUMBER_OF_TEAMS; j++) {
       /* Current team is home team in match */
       if (strcmp(teams[j].name, matches[i].team_home) == 0) {
-        /* Increase goals score for and against the team */
-        teams[j].goals.home       += matches[i].score.home;
-        teams[j].goals.total_fore += matches[i].score.home;
-        teams[j].goals.fore       += matches[i].score.home;
-        teams[j].goals.against    += matches[i].score.out;
+        /* Increase total and home scored goals */
+        teams[j].goals.home   += matches[i].score.home;
+        teams[j].goals.total  += matches[i].score.home;
+
+        /* Increase goals scored for and against the team */
+        teams[j].goals.fore     += matches[i].score.home;
+        teams[j].goals.against  += matches[i].score.out;
+
+        /* Subtract and add to the team's goal difference */
+        teams[j].goals.difference -= matches[i].score.out;
+        teams[j].goals.difference += matches[i].score.home;
 
         /* Increae team's total played matches */
         teams[j].matches.total++;
 
-        /* Increase home team's points based on match result */
-        if (matches[i].score.home > matches[i].score.out) {       /* Won */
+        /* Increase team's points based on match result */
+        if (matches[i].score.home > matches[i].score.out) {       /* Win */
           teams[j].points += 3;
-          teams[j].wins.home++;
-          teams[j].matches.wins++;
+          teams[j].matches.wins.home++;
+          teams[j].matches.wins.total++;
         }
         else if (matches[i].score.home == matches[i].score.out) { /* Tie */
           teams[j].points += 1;
           teams[j].matches.ties++;
         } 
-        else {                                                    /* Lost */
+        else {                                                    /* Loose */
           teams[j].matches.loses++;
         }
       }
@@ -276,25 +282,31 @@ void read_teams (match* matches, int number_of_matches, team* teams, int number_
       /* Current team is out team in match */
       else if (strcmp(teams[j].name, matches[i].team_out) == 0) {
         /* Increase goals score for and against the team */
-        teams[j].goals.home       += matches[i].score.out;
-        teams[j].goals.total_fore += matches[i].score.out;
-        teams[j].goals.fore       += matches[i].score.out;
-        teams[j].goals.against    += matches[i].score.home;
+        teams[j].goals.out   += matches[i].score.out;
+        teams[j].goals.total += matches[i].score.out;
+
+        /* Increase goals scored for and against the team */
+        teams[j].goals.fore    += matches[i].score.out;
+        teams[j].goals.against += matches[i].score.home;
+
+        /* Subtract and add to the goals difference */
+        teams[j].goals.difference -= matches[i].score.home;
+        teams[j].goals.difference += matches[i].score.out;
 
         /* Increae team's total played matches */
         teams[j].matches.total++;
 
         /* Increase home team's points based on match result */
-        if (matches[i].score.out > matches[i].score.home) {       /* Won */
+        if (matches[i].score.out > matches[i].score.home) {       /* Win */
           teams[j].points += 3;
-          teams[j].wins.out++;
-          teams[j].matches.wins++;
+          teams[j].matches.wins.out++;
+          teams[j].matches.wins.total++;
         }
         else if (matches[i].score.out == matches[i].score.home) { /* Tie */
           teams[j].points += 1;
           teams[j].matches.ties++;
         }
-        else {                                                    /* Lost */
+        else {                                                    /* Loose */
           teams[j].matches.loses++;
         }
       }
@@ -303,22 +315,26 @@ void read_teams (match* matches, int number_of_matches, team* teams, int number_
 }
 
 /*
- * Returns array of tie matches where the total score is larger than 4
+ * Returns array of tie matches where the total score is 4 or more
  */
-match_array tie_matches (match* matches, int number_of_matches) {
+match_array tie_matches (match* matches) {
   static match_array tie_matches;
-  tie_matches.size = 0; tie_matches.matches = malloc(sizeof(match));
+  int i;
+  int ties_counter = 0;
 
-  int i;                                                  /* Main loop counter */
-  int tie_matches_counter = 0;                            /* Counter for tie matches */ 
+  /* Declare size and space for array */
+  tie_matches.size = 0; tie_matches.matches = malloc(0);
 
-  for (i = 0; i < number_of_matches; i++) {
-    if (matches[i].score.home == matches[i].score.out) {  /* Home and out score are equal */
-      if (matches[i].score.total >= 4) {                  /* Total score > 4 */
-        tie_matches.matches = realloc(tie_matches.matches, (tie_matches_counter + 1) * sizeof(match));   /* Allocate space for one match */
-        tie_matches.matches[tie_matches_counter] = matches[i];    /* Add current match to tie matches */
-        tie_matches_counter++; 
-        tie_matches.size = tie_matches_counter;
+  /* Loops matches */
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
+    if (matches[i].score.home == matches[i].score.out) { 
+      if (matches[i].score.total >= 4) {
+        /* Reallocate tie_matches to house one more match,
+           add it to the array and increase its size */
+        tie_matches.matches = realloc(tie_matches.matches, (ties_counter + 1) * sizeof(match));
+        tie_matches.matches[ties_counter] = matches[i];
+        ties_counter++; 
+        tie_matches.size++;
       }
     }
   }
@@ -327,44 +343,57 @@ match_array tie_matches (match* matches, int number_of_matches) {
 }
 
 /*
- * Find one round with a total score less than 10. Return with output parameters
+ * Find one round with a total score less than 10.
+ * Return 1 if it exists and output parameters.
  */
-void round_with_less_than_10_goals (match* matches, int number_of_matches, int* round_number, int* total_goals) {
+int round_with_less_than_10_goals (match* matches, int* round_number, int* total_goals) {
   int i;
+  int round_exists = 0;
   int round_counter = 1;
   int score_in_round = 0;
 
-  for (i = 0; i < number_of_matches; i++) {
-    if (matches[i].round == round_counter) {      /* Still in same round */
-      score_in_round += matches[i].score.total;   /* Increase the round score with the match score */
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
+    /* Add match's total score to score_in_score 
+       while in same round */
+    if (matches[i].round == round_counter) {
+      score_in_round += matches[i].score.total;
     }
+    /* Set output parameters and break
+       if current rounds score is less than 10
+       else reset counter and try with next round */
     else {
       if (score_in_round < 10) {
         *round_number = round_counter;
         *total_goals = score_in_round;
+        round_exists = 1;
         break;
       }
       else {
-        score_in_round = 0;                       /* Reset the round score */
-        round_counter++;                          /* Increase round count */
+        score_in_round = 0;
+        round_counter++;
       }
     }     
   }
+
+  return round_exists;
 }
 
 /*
  * Return array of teams that wins more as out team that home team
  */
-team_array teams_winning_out (match* matches, int number_of_matches, team* teams, int number_of_teams) {
+team_array teams_winning_out (team* teams) {
+  static team_array teams_winning_out; 
   int i;
-  int j;
   int k = 0;
 
-  static team_array teams_winning_out; 
+  /* Declare size and space for array */
   teams_winning_out.size = 0; teams_winning_out.teams = malloc(0);
 
-  for (i = 0; i < number_of_teams; i++) {
-    if (teams[i].wins.out > teams[i].wins.home) {
+
+  for (i = 0; i < NUMBER_OF_TEAMS; i++) {
+    if (teams[i].matches.wins.out > teams[i].matches.wins.home) {
+      /* Reallocate teams_winning_out to house one more team,
+        add the current team and increase size of array*/
       teams_winning_out.teams = realloc(teams_winning_out.teams, (k + 1) * sizeof(team));
       teams_winning_out.teams[k] = teams[i];
       teams_winning_out.size++;
@@ -378,38 +407,60 @@ team_array teams_winning_out (match* matches, int number_of_matches, team* teams
 /*
  * Returns home team and audience of match with fewest audience
  */
-void team_with_fewest_home_match_audience (match* matches, int number_of_matches, char *team_name, int *audience) {
+void team_with_fewest_home_match_audience (match* matches, team* teams, char *team_name, int *audience) {
   int i;
-  struct match fewest_audience_match = matches[0];
+  int j;
+  team team_with_fewest_home_match_audience;
 
-  for (i = 0; i < number_of_matches; i++) {
+  /* With all 2015 matches count all teams' home audience */
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
     if (matches[i].date.year == 2015) {
-      if (matches[i].audience < fewest_audience_match.audience) {
-        fewest_audience_match = matches[i];
+      for (j = 0; j < NUMBER_OF_TEAMS; j++) {
+        if (strcmp(teams[j].name, matches[i].team_home) == 0) {
+          teams[j].total_home_audience += matches[i].audience;
+        }
       }
     }
   }
 
-  strcpy(team_name, fewest_audience_match.team_home);
-  *audience = fewest_audience_match.audience;
+  /* Set team to have fewest home audience.
+     For later comparison */
+  team_with_fewest_home_match_audience = teams[0];
+
+  /* Set current team to have fewest audience
+     if the number if smaller than the previous */
+  for (i = 0; i < NUMBER_OF_TEAMS; i++) {
+    if (teams[i].total_home_audience < team_with_fewest_home_match_audience.total_home_audience) {
+      team_with_fewest_home_match_audience = teams[i];
+    }
+  }
+
+  /* Set output parameters to house result */
+  strcpy(team_name, team_with_fewest_home_match_audience.name);
+  *audience = team_with_fewest_home_match_audience.total_home_audience;
 }
 
 /*
  * Returns all matches within a given time frame
  */
-match_array matches_in_time_frame (match* matches, int number_of_matches, char lower[6], char upper[6], char* week_day) {
+match_array matches_in_time_frame (match* matches, char lower[6], char upper[6], char* week_day) {
   int i;
   int j = 0;
 
+  /* Convert time strings to structs */
   time time_lower = time_from_string(lower);
   time time_upper = time_from_string(upper); 
 
   static match_array matches_in_time_frame;
+
+  /* Declare size and space for array */
   matches_in_time_frame.size = 0; matches_in_time_frame.matches = malloc(0);
 
-  for (i = 0; i < number_of_matches; i++) {
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
     if (strcmp(matches[i].week_day, week_day) == 0) {
       if (is_match_in_time_frame(&matches[i], &time_lower, &time_upper) == 1) {
+        /* Reallocate matches_in_time_frame to house one more item,
+           add it to the array and increase the array's size*/
         matches_in_time_frame.matches = realloc(matches_in_time_frame.matches, (j + 1) * sizeof(match));
         matches_in_time_frame.matches[j] = matches[i];
         matches_in_time_frame.size++;
@@ -436,63 +487,18 @@ time time_from_string (char time_string[6]) {
  * Returns 1 if match is between lower and upper - otherwise 0.
  */
 int is_match_in_time_frame (match* match, time* lower, time* upper) {
-  if (match->time.hours > lower->hours && match->time.hours < upper->hours) { /* Match is in the hour time frame */
+  /* First, compare the hour of the match's time
+     to the hours of the given time frame */
+  if (match->time.hours > lower->hours && match->time.hours < upper->hours) {
     return 1;
   }
-  else if (match->time.hours == lower->hours) {     /* Match hour is lower hour */
-    if (match->time.minutes >= lower->minutes) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
+  /* If the hour of the match's time is equal
+     to the hour of the time frame then compare minutes  */
+  else if (match->time.hours == lower->hours) {
+    return match->time.minutes >= lower->minutes;
   }
-  else if (match->time.hours == upper->hours) {     /* Match hour is upper hour */
-    if (match->time.minutes <= upper->minutes) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  }
-  else {
-    return 0;
-  }
-}
-
-/*
- * Prints tabel of results
- */
-void print_result (match* matches, int number_of_matches, team* teams, int number_of_teams) {
-  int i, j;
-
-  /* Sort teams with helper function team_compare */
-  qsort(teams, number_of_teams, sizeof(team), team_compare);
-
-  /* Print results table */
-  printf("Team \t Points \t Total matches \t Wins \t Loses \t Ties \t Goals for \t Goals against \t Goal difference\n");
-
-  for (i = 0; i < number_of_teams; i++) {
-    printf("%-3s \t %-7d \t %-12d \t %-4d \t %-5d \t %-5d \t %-8d \t %-12d \t %d \n", 
-            teams[i].name,          teams[i].points,        teams[i].matches.total, 
-            teams[i].matches.wins,  teams[i].matches.loses, teams[i].matches.ties,
-            teams[i].goals.fore,    teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
-  }
-}
-
-/*
- * Helper function for print_result
- * Sorting decision for qsort based on teams' points
- */
-int team_compare (const void* a, const void* b) {
-  team* team_1 = (team*) a;
-  team* team_2 = (team*) b;
-
-  if (team_1->points > team_2->points) {
-    return -1;
-  }
-  else if (team_1->points < team_2->points) {
-    return 1;
+  else if (match->time.hours == upper->hours) {
+    return match->time.minutes <= upper->minutes;
   }
   else {
     return 0;
@@ -504,14 +510,46 @@ int team_compare (const void* a, const void* b) {
  */
 void print_matches (match_array* matches) {
   int i;
-  printf("Round  Day  Date       Time  Home team  Out team  Home goals  Out goals  Audience\n");
+
+  /* Table header */
+  printf("===================================================================\n"
+         "| ROUND | DAY | DATE       | TIME  | TEAMS     | GOALS | AUDIENCE |\n"
+         "===================================================================\n");
+
+  /* Table body */
   for (i = 0; i < matches->size; i++) {
-    printf("%-6d %-4s %.2d/%.2d/%d %.2d:%.2d %-10s %-9s %-11d %-10d %d\n",
+    printf("| %-5d | %-3s | %.2d/%.2d/%d | %.2d:%.2d | %3s - %-3s | %d - %d | %-8d |\n",
            matches->matches[i].round,        matches->matches[i].week_day,  matches->matches[i].date.day,
            matches->matches[i].date.month,   matches->matches[i].date.year, matches->matches[i].time.hours,
            matches->matches[i].time.minutes, matches->matches[i].team_home, matches->matches[i].team_out,
            matches->matches[i].score.home,   matches->matches[i].score.out, matches->matches[i].audience);
   }
+  printf("===================================================================\n");
+}
+
+/*
+ * Helper function for printing a round
+ */
+void print_round (match* matches, int round_number) {
+  match_array matches_in_round;
+  int i;
+  int j = 0;
+
+  /* Declare size and space for array */
+  matches_in_round.size = 0; matches_in_round.matches = malloc(0);
+
+  for (i = 0; i < NUMBER_OF_MATCHES; i++) {
+    if (matches[i].round == round_number) {
+      /* Reallocate array for one more element,
+         add it and increase its size */
+      matches_in_round.matches = realloc(matches_in_round.matches, (j + 1) * sizeof(match));
+      matches_in_round.matches[j] = matches[i];
+      matches_in_round.size++;
+      j++;
+    }
+  }
+
+  print_matches(&matches_in_round);
 }
 
 /*
@@ -519,82 +557,153 @@ void print_matches (match_array* matches) {
  */
 void print_teams (team_array* teams) {
   int i;
-  printf("Team name\n");
+  /* Table header */
+  printf("===============================\n"
+         "| TEAM | WINS OUT | WINS HOME |\n"
+         "===============================\n");
+
+  /* Table body */
   for (i = 0; i < teams->size; i++) {
-    printf("%s\n", teams->teams[i].name);
+    printf("| %-4s | %-8d | %-9d |\n", teams->teams[i].name, teams->teams[i].matches.wins.out, teams->teams[i].matches.wins.home);
   }
+  printf("===============================\n");
 }
 
-void print_tie_matches (match* matches, int number_of_matches) {
-  match_array sub_matches_ties = tie_matches(matches, number_of_matches);
+/*
+ * Task 1: Print tie matches with more than 4 goals total
+ */
+void print_tie_matches (match* matches) {
+  match_array sub_matches_ties = tie_matches(matches);
   print_matches(&sub_matches_ties);
 }
 
-void print_round_width_less_than_10_goals (match* matches, int number_of_matches) {
+/*
+ * Taks 2: print round with less that 10 goals total
+ */
+void print_round_width_less_than_10_goals (match* matches) {
   int round;
   int goals;
-  round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
-  printf("Round %d had %d goals\n", round, goals);
+  /* Print if the round exists - otherwise print error */
+  if (round_with_less_than_10_goals(matches, &round, &goals) == 1) {
+    printf("Round %d had %d goals\n", round, goals);
+    print_round(matches, round);
+  }
+  else {
+    printf("Round with less than 10 goals scored does not exist");
+  }
 }
 
-void print_teams_winning_out(match* matches, int number_of_matches, team* teams, int number_of_teams) {
-  team_array sub_teams_winning_out = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
+/*
+ * Task 3: Print teams winning more mathces out than home
+ */
+void print_teams_winning_out(match* matches, team* teams) {
+  team_array sub_teams_winning_out = teams_winning_out(teams);
   print_teams(&sub_teams_winning_out);
 }
 
-void print_team_with_fewest_home_match_audience (match* matches, int number_of_matches) {
+/*
+ * Task 4: Print team with fewest total audience at home matches in 2015
+ */
+void print_team_with_fewest_home_match_audience (match* matches, team* teams) {
   char team_name[4];
   int audience;
-  team_with_fewest_home_match_audience(matches, number_of_matches, team_name, &audience);
-  printf("%s had %d in a home match in 2015\n", team_name, audience);
+  team_with_fewest_home_match_audience(matches, teams, team_name, &audience);
+  printf("%s had the fewest total audience at home matches in 2015: %d\n", team_name, audience);
 }
 
-void print_matches_in_time_frame (match* matches, int number_of_matches) {
-  char start[] = "13:15";
-  char end[] = "14:15";
-  char week_day[] = "Son";
-
-  match_array sub_matches_in_time_frame = matches_in_time_frame(matches, number_of_matches, start, end, week_day);
+/*
+ * Task 5: Print matches at a given day in a given time frame
+ */
+void print_matches_in_time_frame (match* matches, char* start, char* end, char* week_day) {
+  match_array sub_matches_in_time_frame = matches_in_time_frame(matches, start, end, week_day);
   print_matches(&sub_matches_in_time_frame);
 }
 
 /*
- * Print all data to standard output
+ * Task 5: Print tabel of results
  */
-void print_all_to_std (match* matches, int number_of_matches, team* teams, int number_of_teams) {
-  // printf("List of tie matches with more than 4 goals total \n");
-  // match* ties = tie_matches(matches, number_of_matches);
-  // print_matches(ties, sizeof(ties));
-  // free(ties);
+void print_result (match* matches, team* teams) {
+  int i;
 
-  // printf("\nRound with less than 10 goals scored\n");
-  // int round;
-  // int goals;
-  // round_with_less_than_10_goals(matches, number_of_matches, &round, &goals);
-  // printf("Round %d had %d goals\n", round, goals);  
+  /* Sort teams with helper function */
+  qsort(teams, NUMBER_OF_TEAMS, sizeof(team), team_compare);
 
-  // printf("\nList of teams that wins more matches out than home\n");
-  // team* sub_teams = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-  // print_teams(sub_teams, sizeof(sub_teams));  
-  // free(sub_teams);
+  /* Table header */
+  printf("====================================================================================\n"
+         "|                                      RESULT                                      |\n"
+         "====================================================================================\n"
+         "| POS | TEAM | POINTS | MATCHES | WINS | LOSES | TIES | GOALS+ | GOALS- | GOALS+/- |\n"
+         "====================================================================================\n");
 
-  // team* subs = teams_winning_out(matches, number_of_matches, teams, number_of_teams);
-  // printf("%s\n", subs[0].name);
-  // free(subs);
+  /* Table body */
+  for (i = 0; i < NUMBER_OF_TEAMS; i++) {
+    printf("| %-4d| %-5s| %-7d| %-8d| %-5d| %-6d| %-5d| %-7d| %-7d| %-9d|\n", 
+            i + 1, teams[i].name,   teams[i].points,        teams[i].matches.total, 
+            teams[i].matches.wins.total,  teams[i].matches.loses, teams[i].matches.ties,
+            teams[i].goals.fore,    teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
+  }
+  printf("====================================================================================\n");
+}
 
-  // printf("Team that had fewest audience at a home matçch in 2015\n");
-  // char team_name[4];
-  // int audience;
-  // team_with_fewest_home_match_audience(matches, number_of_matches, team_name, &audience);
-  // printf("%s had %d in a home match in 2015\n", team_name, audience);
+/*
+ * Helper function for print_result
+ * Sorting decision for qsort based on teams' points
+ */
+int team_compare (const void* a, const void* b) {
+  team* team_1 = (team*) a;
+  team* team_2 = (team*) b;
 
-  // printf("List of matches played on a Sunday between 13:15 and 14:15\n");
-  // char start[] = "13:15";
-  // char end[] = "14:15";
-  // char week_day[] = "Son";
-  // match* sub_matches = matches_in_time_frame(matches, number_of_matches, start, end, week_day);
-  // print_matches(sub_matches, sizeof(sub_matches));
+  return team_sort_by_points(team_1, team_2);
+}
 
-  // printf("Total result of Superliga 2015-2016\n");
-  // print_result(matches, number_of_matches, teams, number_of_teams);
+/*
+ * Helper function for team_compare. Compares teams' points
+ */
+int team_sort_by_points (team* team_1, team* team_2) {
+  if (team_1->points > team_2->points) {
+    return -1;
+  }
+  else if (team_1->points < team_2->points) {
+    return 1;
+  }
+  else {
+    return team_sort_by_goal_difference(team_1, team_2);
+  }
+}
+
+/*
+ * Helper function for team_compare. Compares teams' goal difference
+ */
+int team_sort_by_goal_difference (team* team_1, team* team_2) {
+  if (team_1->goals.difference > team_2->goals.difference) {
+    return -1;
+  }
+  else if (team_1->goals.difference < team_2->goals.difference) {
+    return 1;
+  }
+  else {
+    return team_sort_by_total_goals (team_1, team_2);
+  }
+}
+
+/*
+ * Helper function for team_compare. Compares teams' total goals
+ */
+int team_sort_by_total_goals (team* team_1, team* team_2) {
+  if (team_1->goals.total > team_2->goals.total) {
+    return -1;
+  }
+  else if (team_1->goals.total < team_2->goals.total) {
+    return 1;
+  }
+  else {
+    return team_sort_by_name (team_1, team_2);
+  }
+}
+
+/*
+ * Helper function for team_compare. Compares teams' name
+ */
+int team_sort_by_name (team* team_1, team* team_2) {
+  return strcmp(team_1->name, team_2->name);
 }

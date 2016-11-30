@@ -4,20 +4,68 @@
 		"selected_items":
 		[
 			[
-				"si",
-				"size"
-			],
-			[
-				"match",
-				"matches_in_time_frame"
+				"mat",
+				"matçch"
 			],
 			[
 				"matches",
-				"matches_in_time_frame"
+				"matches"
 			],
 			[
-				"mat",
-				"matches_in_time_frame"
+				"numer",
+				"number_of_matches"
+			],
+			[
+				"print",
+				"print_matches"
+			],
+			[
+				"print_team",
+				"print_team_with_fewest_home_match_audience"
+			],
+			[
+				"numb",
+				"number_of_teams"
+			],
+			[
+				"number",
+				"number_of_matches"
+			],
+			[
+				"num",
+				"number_of_matches"
+			],
+			[
+				"nmb",
+				"number_of_matches"
+			],
+			[
+				"mathc",
+				"matches"
+			],
+			[
+				"match",
+				"matches"
+			],
+			[
+				"print_te",
+				"print_tie_matches"
+			],
+			[
+				"team",
+				"team_array"
+			],
+			[
+				"prin",
+				"print_tie_matches"
+			],
+			[
+				"tem",
+				"team_array"
+			],
+			[
+				"si",
+				"size"
 			],
 			[
 				"sub",
@@ -48,20 +96,8 @@
 				"printf\tprintf …"
 			],
 			[
-				"numer",
-				"number_of_teams"
-			],
-			[
 				"team_wii",
 				"teams_winning_out"
-			],
-			[
-				"team",
-				"team_size"
-			],
-			[
-				"number",
-				"number_of_teams"
 			],
 			[
 				"number_of",
@@ -80,10 +116,6 @@
 				"number_of_matches"
 			],
 			[
-				"print",
-				"print_matches"
-			],
-			[
 				"teams_",
 				"teams_winning_out"
 			],
@@ -92,16 +124,8 @@
 				"teams_sub"
 			],
 			[
-				"prin",
-				"printf\tprintf …"
-			],
-			[
 				"teams",
 				"teams_sub"
-			],
-			[
-				"num",
-				"number_of_teams"
 			],
 			[
 				"round",
@@ -118,10 +142,6 @@
 			[
 				"pr",
 				"print"
-			],
-			[
-				"numb",
-				"number_of_ties"
 			],
 			[
 				"deci",
@@ -494,26 +514,6 @@
 			[
 				"con",
 				"convertDollarsWidthRate"
-			],
-			[
-				"convertTo",
-				"convertToDKK"
-			],
-			[
-				"co",
-				"convertWithRate"
-			],
-			[
-				"dou",
-				"double"
-			],
-			[
-				"contr",
-				"controlRight"
-			],
-			[
-				"sco",
-				"scroller"
 			]
 		]
 	},
@@ -855,6 +855,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"matches",
+			"teams_winning_out",
+			"print_tie_matches",
+			"d",
+			"team",
 			"matches_in_time_frame",
 			"print_teams",
 			"match_array",
@@ -977,12 +982,7 @@
 			"string",
 			"starting_point",
 			"void",
-			"active-model",
-			"findRecord",
-			"guest_api",
-			"liquid",
-			"goodie-page-goodie-title",
-			"text-transform"
+			"active-model"
 		],
 		"highlight": true,
 		"in_selection": false,
