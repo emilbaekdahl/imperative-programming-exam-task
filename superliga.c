@@ -46,30 +46,34 @@ typedef struct team {
     int ties; 
     int total;
   } matches;
-  int     points;
-  int     total_home_audience;
+  int points;
+  int total_home_audience;
 } team;
 
 typedef struct match {
-  int     round;
-  char    week_day[4];
-  struct  date date;
-  struct  time time;
-  char    team_home[4];
-  char    team_out[4];
-  struct  { int home; int out; int total; } score;
-  int     audience;
+  int round;
+  char week_day[4];
+  struct date date;
+  struct time time;
+  char team_home[4];
+  char team_out[4];
+  struct { 
+    int home; 
+    int out; 
+    int total;
+  } score;
+  int audience;
 } match;
 
 /* Array types for keeping track of size and content of dynamic arrays */
 typedef struct team_array {
-  int   size;
+  int size;
   team* teams;
 } team_array;
 
 typedef struct match_array {
-  int     size;
-  match*  matches;
+  int size;
+  match* matches;
 } match_array;
 
 /* =================== */
@@ -127,11 +131,21 @@ int main (int argc, char* argv[]) {
   /* Print everything to stdio if --print is passed */
   for (i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--print") == 0) {
+      printf("TIE MATCHES WITH MORE THAN 4 TOTAL GOALS\n");
       print_tie_matches(matches);
+
+      printf("ROUND WITH LESS THAN 10 TOTAL GOALS\n");
       print_round_width_less_than_10_goals(matches);
+
+      printf("TEAM WINNING MORE MATCHES OUT THAN HOME\n");
       print_teams_winning_out(matches, teams);
+
+      printf("TEAM WITH FEWEST TOTAL HOME MATCH AUDIENCE IN 2015\n");
       print_team_with_fewest_home_match_audience(matches, teams);
+
+      printf("ALL MATCHES BETWEEN 13:15 AND 14:15 ON A SUNDAY");
       print_matches_in_time_frame(matches, "13:15", "14:15", "Son");
+
       print_result(matches, teams);
       return 0;
     }
