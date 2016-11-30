@@ -113,6 +113,7 @@ void print_menu ();
 void print_matches (match_array* matches);
 void print_round (match* matches, int round_number);
 void print_teams (team_array* teams);
+void print_all (match* matches, team* teams);
 
 /* ======== */
 /* | Main | */
@@ -131,22 +132,7 @@ int main (int argc, char* argv[]) {
   /* Print everything to stdio if --print is passed */
   for (i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--print") == 0) {
-      printf("TIE MATCHES WITH MORE THAN 4 TOTAL GOALS\n");
-      print_tie_matches(matches);
-
-      printf("ROUND WITH LESS THAN 10 TOTAL GOALS\n");
-      print_round_width_less_than_10_goals(matches);
-
-      printf("TEAM WINNING MORE MATCHES OUT THAN HOME\n");
-      print_teams_winning_out(matches, teams);
-
-      printf("TEAM WITH FEWEST TOTAL HOME MATCH AUDIENCE IN 2015\n");
-      print_team_with_fewest_home_match_audience(matches, teams);
-
-      printf("ALL MATCHES BETWEEN 13:15 AND 14:15 ON A SUNDAY");
-      print_matches_in_time_frame(matches, "13:15", "14:15", "Son");
-
-      print_result(matches, teams);
+      print_all(matches, teams);
       return 0;
     }
   }
@@ -604,7 +590,9 @@ void print_teams (team_array* teams) {
  */
 void print_tie_matches (match* matches) {
   match_array sub_matches_ties = tie_matches(matches);
+  printf("| TIE MATCHES WITH TOTAL GOLAS >= 4 |\n\n");
   print_matches(&sub_matches_ties);
+  printf("\n\n");
 }
 
 /*
@@ -613,10 +601,13 @@ void print_tie_matches (match* matches) {
 void print_round_width_less_than_10_goals (match* matches) {
   int round;
   int goals;
+
   /* Print if the round exists - otherwise print error */
   if (round_with_less_than_10_goals(matches, &round, &goals) == 1) {
-    printf("Round %d had %d goals\n", round, goals);
+    printf("| ROUND WITH LESS THAN 10 TOTAL GOALS |\n\n");
+    printf("Round %d had %d goals\n\n", round, goals);
     print_round(matches, round);
+    printf("\n\n");
   }
   else {
     printf("Round with less than 10 goals scored does not exist");
@@ -628,7 +619,9 @@ void print_round_width_less_than_10_goals (match* matches) {
  */
 void print_teams_winning_out(match* matches, team* teams) {
   team_array sub_teams_winning_out = teams_winning_out(teams);
+  printf("| TEAM(S) WINNING MORE OUT THAN HOME |\n\n");
   print_teams(&sub_teams_winning_out);
+  printf("\n\n");
 }
 
 /*
@@ -638,7 +631,9 @@ void print_team_with_fewest_home_match_audience (match* matches, team* teams) {
   char team_name[4];
   int audience;
   team_with_fewest_home_match_audience(matches, teams, team_name, &audience);
+  printf("| TEAM WITH FEWEST TOTAL AUDIENCE AT HOME MATCHES |\n\n");
   printf("%s had the fewest total audience at home matches in 2015: %d\n", team_name, audience);
+  printf("\n\n");
 }
 
 /*
@@ -646,7 +641,9 @@ void print_team_with_fewest_home_match_audience (match* matches, team* teams) {
  */
 void print_matches_in_time_frame (match* matches, char* start, char* end, char* week_day) {
   match_array sub_matches_in_time_frame = matches_in_time_frame(matches, start, end, week_day);
+  printf("| MATCHES ON %s BETWEEN %s AND %s |\n\n", week_day, start, end);
   print_matches(&sub_matches_in_time_frame);
+  printf("\n\n");
 }
 
 /*
@@ -658,10 +655,10 @@ void print_result (match* matches, team* teams) {
   /* Sort teams with helper function */
   qsort(teams, NUMBER_OF_TEAMS, sizeof(team), team_compare);
 
+  printf("| SUPERLIGA 2015-2016 RESULT |\n\n");
+
   /* Table header */
   printf("====================================================================================\n"
-         "|                                      RESULT                                      |\n"
-         "====================================================================================\n"
          "| POS | TEAM | POINTS | MATCHES | WINS | LOSES | TIES | GOALS+ | GOALS- | GOALS+/- |\n"
          "====================================================================================\n");
 
@@ -673,6 +670,7 @@ void print_result (match* matches, team* teams) {
             teams[i].goals.fore,    teams[i].goals.against, teams[i].goals.fore - teams[i].goals.against);
   }
   printf("====================================================================================\n");
+  printf("\n\n");
 }
 
 /*
@@ -736,4 +734,18 @@ int team_sort_by_total_goals (team* team_1, team* team_2) {
  */
 int team_sort_by_name (team* team_1, team* team_2) {
   return strcmp(team_1->name, team_2->name);
+}
+
+void print_all (match* matches, team* teams) {
+  print_tie_matches(matches);
+
+  print_round_width_less_than_10_goals(matches);
+
+  print_teams_winning_out(matches, teams);
+
+  print_team_with_fewest_home_match_audience(matches, teams);
+
+  print_matches_in_time_frame(matches, "13:15", "14:15", "Son");
+
+  print_result(matches, teams);
 }
